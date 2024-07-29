@@ -26,5 +26,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/testimage:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/test_image:latest
         
