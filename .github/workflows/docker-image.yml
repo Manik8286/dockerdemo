@@ -5,12 +5,28 @@ on:
     branches: main
 
 jobs:
-  login:
+  build:
+    name: build & push docker image
     runs-on: ubuntu-latest
+    env: 
+      IMG_NAME: ${{github.repository}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: ${{ 
+              github.event.base_ref =='refs/heads/main' && 
+              github.ref_type == 'tag' && 
+              !startsWith(github.ref, 'refs/tags/v0.') }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+        
